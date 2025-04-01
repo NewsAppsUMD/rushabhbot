@@ -7,6 +7,7 @@ from slack.errors import SlackApiError
 
 with open('orioles_contract_data.csv', 'r', newline='') as csvfile:
     file_reader = csv.reader(csvfile)
+    existing_contracts = list(file_reader)
 
 slack_token = os.environ.get('SLACK_API_TOKEN')
 client = WebClient(token=slack_token)
@@ -14,7 +15,6 @@ client = WebClient(token=slack_token)
 orioles_transactions_url = "https://www.spotrac.com/mlb/transactions/_/start/2025-01-01/end/2025-12-31/team/bal"
 response = requests.get(orioles_transactions_url, headers={'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:121.0) Gecko/20100101 Firefox/121.0'})
 soup = BeautifulSoup(response.text, 'html.parser')
-orioles_transactions = []
 table = soup.find('ul', attrs = {'class': 'list-group'})
 
 for row in table.findAll('li', attrs = {'class': 'list-group-item'}):
@@ -33,29 +33,27 @@ for row in table.findAll('li', attrs = {'class': 'list-group-item'}):
         'Player URL': orioles_player_url,
         'Contract Details': orioles_contract_details
     }
-    orioles_transactions.append(orioles_contract)
-    sentence = f"The O's have made a roster move, {orioles_player_name}, {orioles_contract_details}. Hit the link to learn more: {orioles_player_url}"
-    msg = sentence
-    print(msg)
-    # try:
-    #     response = client.chat_postMessage(
-    #        channel="slack-bots",
-    #        text=msg,
-    #        unfurl_links=True, 
-    #        unfurl_media=True
-    #     )
-    #     print("success!")
-    # except SlackApiError as e:
-    #     assert e.response["ok"] is False
-    #     assert e.response["error"]
-    #     print(f"Got an error: {e.response['error']}")
+    if list(orioles_contract.values()) not in existing_contracts:
+        print(orioles_contract.values())
+        existing_contracts.append(list(orioles_contract.values()))
+        sentence = f"⚾️ The O's have made a roster move, {orioles_player_name}, {orioles_contract_details}. Hit the link to learn more: {orioles_player_url}"
+        msg = sentence
+    try:
+        response = client.chat_postMessage(
+           channel="slack-bots",
+           text=msg,
+           unfurl_links=True, 
+           unfurl_media=True
+        )
+        print("success!")
+    except SlackApiError as e:
+        assert e.response["ok"] is False
+        assert e.response["error"]
+        print(f"Got an error: {e.response['error']}")
 
 with open('orioles_contract_data.csv', 'w', newline='') as csvfile:
-    fieldnames = ['Player Name', 'Player URL', 'Contract Details']
-    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-    for row in orioles_transactions:
+    writer = csv.writer(csvfile)
+    for row in existing_contracts:
         writer.writerow(row)
 
 
-
-    # add if statement to see if the contract details already exist
