@@ -38,18 +38,18 @@ for row in table.findAll('li', attrs = {'class': 'list-group-item'}):
         existing_contracts.append(list(orioles_contract.values()))
         sentence = f"⚾️ The O's have made a roster move, {orioles_player_name}, {orioles_contract_details}. Hit the link to learn more: {orioles_player_url}"
         msg = sentence
-    try:
-        response = client.chat_postMessage(
-           channel="slack-bots",
-           text=msg,
-           unfurl_links=True, 
-           unfurl_media=True
-        )
-        print("success!")
-    except SlackApiError as e:
-        assert e.response["ok"] is False
-        assert e.response["error"]
-        print(f"Got an error: {e.response['error']}")
+        try:
+            response = client.chat_postMessage(
+            channel="slack-bots",
+            text=msg,
+            unfurl_links=True, 
+            unfurl_media=True
+            )
+            print("success!")
+        except SlackApiError as e:
+            assert e.response["ok"] is False
+            assert e.response["error"]
+            print(f"Got an error: {e.response['error']}")
 
 with open('orioles_contract_data.csv', 'w', newline='') as csvfile:
     writer = csv.writer(csvfile)
