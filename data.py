@@ -36,10 +36,14 @@ for row in table.findAll('li', attrs = {'class': 'list-group-item'}):
     if list(orioles_contract.values()) not in existing_contracts:
         print(orioles_contract.values())
         existing_contracts.append(list(orioles_contract.values()))
-        sentence = f""" :orioles:Guess what? Your Baltimore Orioles made a roster move!
+        sentence = f""" :orioles: Guess what? Your Baltimore Orioles made a roster move!
+
         {orioles_player_name}, {orioles_contract_details}.
+
         Follow the link to learn more about the move: {orioles_player_url}.
+
         For all other Orioles news, visit https://www.mlb.com/orioles.
+
         Go O's! #Birdland :orioles: """
         msg = sentence
         try:
