@@ -36,7 +36,7 @@ for row in table.findAll('li', attrs = {'class': 'list-group-item'}):
     if list(orioles_contract.values()) not in existing_contracts:
         print(orioles_contract.values())
         existing_contracts.append(list(orioles_contract.values()))
-        sentence = f"⚾️ The O's have made a roster move, {orioles_player_name}, {orioles_contract_details}. Hit the link to learn more: {orioles_player_url}"
+        sentence = f"⚾️ Guess what? Your Baltimore Orioles made a move! {orioles_player_name}, {orioles_contract_details}. Follow the link to learn more about the move: {orioles_player_url}. For all other Orioles news, visit https://www.mlb.com/orioles! Go 0's!"
         msg = sentence
         try:
             response = client.chat_postMessage(
